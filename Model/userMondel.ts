@@ -6,7 +6,7 @@ interface userData {
     lastName: string;
     stack: string;
     phoneNum: string;
-    
+    profile:any[]
     email: string;
     studenID: string;
     studentLearning: any[];
@@ -29,12 +29,14 @@ const userModel = new mongoose.Schema({
     email: {
         type: String 
     },
-    phoneNum: {
-        type: String 
-    },
     studentID: {
         type: String 
     },
+    profile: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"profiles"
+    }],
+
     studentLearning: [{
         type: mongoose.Schema.Types.ObjectId,
         ref:"learnings"

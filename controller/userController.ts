@@ -4,6 +4,8 @@ import { asyncHandler } from "../AsyncHandler"
 import {mainAppError,HTTP} from "../middlewares/ErrorDefinder"
 import { AdminServiceEmail } from "../utils/emailvat"
 import { TokenGenerator } from "../utils/GenerateToken"
+import profileModel from "../Model/profileModel"
+import mongoose from "mongoose"
 
 function generateStudentId() {
 	const characters =
@@ -29,30 +31,25 @@ function generateStudentId() {
  *         - firstName
  *         - lastName
  *         - stack
- *         - phoneNum
  *         - email
  *       properties:
- *         firtsName:
+ *         firstName:
  *           type: string
- *           description: user first name
+ *           description: The user first name
  *         lastName:
  *           type: string
- *           description: user last name
+ *           description: The user last name
  *         stack:
  *           type: string
- *           description: user prefer stack
- *         phoneNum:
- *           type: string
- *           description: user phone number
+ *           description: preferr stack
  *         email:
  *           type: string
- *           description: user phone number
+ *           description: The prefeered email
  *       example:
  *         firstName: john
- *         lastName: Alexande
- *         stack: full stack Engineer
- *         phoneNum: 09081713598
- *         email: theo4felix@gmail.com
+ *         lastName: peter
+ *         stack: backend engineer
+ *         email: johnjames@gmail.com
  */
 
 
@@ -72,7 +69,7 @@ function generateStudentId() {
  *        content:
  *          application/json:
  *            schema:
- *               $ref: '#/components/schemas/users'
+ *              $ref: '#/components/schemas/users'
  *      responses:
  *          '200':
  *              description: Resource added successfully
@@ -85,9 +82,9 @@ function generateStudentId() {
 export const registerStudent = asyncHandler(async (req:Request, res:Response) => {
     try
     {
-        const { firstName, lastName, email,phoneNum, stack } = req.body
+        const { firstName, lastName, email, stack } = req.body
         
-         if (!email || !firstName || !lastName || !phoneNum || !stack)
+         if (!email || !firstName || !lastName  || !stack)
             {
                 return res.status(400).json({message:"please enter all field"})
             }
@@ -102,10 +99,25 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
             email,
             firstName,
             lastName,
-            phoneNum,
             stack,
             studentID:generateStudentId()
         })
+
+        const profileData = await profileModel.create({
+            _id:studentData._id,
+            bio: "",
+            gitHubLink: "",
+            facebookLink: "",
+            linkedinLink: "",
+            twitterLink: "",
+            
+        })
+
+        studentData?.profile.push(new mongoose.Types.ObjectId(profileData?._id))
+        studentData?.save()
+
+        profileData.user = studentData._id
+        profileData.save()
 
         AdminServiceEmail(studentData.firstName, studentData.lastName, studentData.studenID)
 				.then((result) => {
@@ -146,8 +158,8 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
  *         studentID:
  *           type: string
  *           description: user can log in
- *       example:
- *         studentID: K10Xo2p6
+ *     example:
+ *       studentID: K10Xo2p6
  */
 
 
@@ -187,7 +199,13 @@ export const LoginStudent = asyncHandler(async (req:Request, res:Response) => {
                 return res.status(400).json({mesage:"field can't be empty"})
         }
         
-        const checkId = await studentModel.findOne({ studentID }).exec()
+        const checkId = await studentModel.findOne({ studentID }).populate({
+            path: "profile",
+            options:{createdAt: -1}
+        }).populate({
+            path: "studentLearning",
+            options:{createdAt: -1}
+        }).exec()
         
 
         if (checkId)
@@ -218,3 +236,143 @@ export const LoginStudent = asyncHandler(async (req:Request, res:Response) => {
         
     }
 })
+
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     getAllusers:
+ *       type: object
+ *       required:
+ *         - firstName
+ *         - lastName
+ *         - stack
+ *         - email
+ *         - studentID
+ *       properties:
+ *         firtsName:
+ *           type: string
+ *           description: user first name
+ *         lastName:
+ *           type: string
+ *           description: user last name
+ *         stack:
+ *           type: string
+ *           description: user prefer stack
+ *         email:
+ *           type: string
+ *           description: user phone number
+ *         studentID:
+ *           type: string
+ *           description:  studentID
+ *       example:
+ *         firstName: john
+ *         lastName: Alexande
+ *         stack: full stack Engineer
+ *         phoneNum: 09081713598
+ *         email: theo4felix@gmail.com
+ *         studentID:k10X9797
+ */
+
+/**
+ * @swagger
+ * /api/allstudent:
+ *   get:
+ *     summary: Returns the list of all the students
+ *     tags: [users]
+ *     responses:
+ *       200:
+ *         description: The list of the student
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/getAllusers'
+ */
+
+
+export const getAllStudent = asyncHandler(async (req: Request, res: Response) => {
+
+    try
+    {
+        const allUser = await studentModel.find().populate({
+            path: "profile",
+            options:{createdAt: -1}
+        }).populate({
+            path: "studentLearning",
+            options:{createdAt: -1}
+        })
+
+        return res.status(HTTP.OK).json({
+            message: "created",
+            data: allUser,
+            });
+        
+    } catch (error)
+    {
+          new mainAppError({
+            name: "Error in Fetchibg all User",
+            message: "can get all user",
+            status: HTTP.BAD_REQUEST,
+            isSuccess:false
+        })
+    }
+
+})
+ 
+
+/**
+ * @swagger
+ * /api/onestudent/{id}:
+ *   get:
+ *     summary: Get a single student by id
+ *     tags: [Books]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The book id
+ *     responses:
+ *       200:
+ *         description: The user description by id
+ *         contens:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/getAllusers'
+ *       404:
+ *         description: The book was not found
+ */
+
+
+export const getSingleStudent = asyncHandler(async (req: Request, res: Response) => {
+
+    try
+    {
+        const oneUser = await studentModel.findById(req.params.id).populate({
+            path: "profile",
+            options:{createdAt: -1}
+        }).populate({
+            path: "studentLearning",
+            options:{createdAt: -1}
+        })
+
+        return res.status(HTTP.OK).json({
+            message: "get One User",
+            data: oneUser,
+            });
+        
+    } catch (error)
+    {
+          new mainAppError({
+            name: "Error in Fetchibg all User",
+            message: "can get all user",
+            status: HTTP.BAD_REQUEST,
+            isSuccess:false
+        })
+    }
+
+ })

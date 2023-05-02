@@ -7,6 +7,9 @@ import { AdminServiceEmail } from "../utils/emailvat"
 import { TokenGenerator } from "../utils/GenerateToken"
 import mongoose from "mongoose";
 
+
+
+
 export const createLearning = asyncHandler(async(req:Request, res:Response) => {
     try
     {
@@ -29,6 +32,8 @@ export const createLearning = asyncHandler(async(req:Request, res:Response) => {
 
         getStudent?.studentLearning.push(new mongoose.Types.ObjectId(createStudentLearning?._id))
         getStudent!.save()
+ 
+
 
 
          return res.status(HTTP.OK).json({
