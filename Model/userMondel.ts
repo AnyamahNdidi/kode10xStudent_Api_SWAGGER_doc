@@ -8,7 +8,7 @@ interface userData {
     phoneNum: string;
     profile:any[]
     email: string;
-    studenID: string;
+    studentID: string;
     studentLearning: any[];
     _doc:any
 }

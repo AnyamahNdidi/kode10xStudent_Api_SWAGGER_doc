@@ -18,7 +18,7 @@ const oAuth = new google.auth.OAuth2(GOOGLE_ID, GOOGLE_SECRET, GOOGLE_REDIRECT);
 oAuth.setCredentials({ refresh_token: GOOGLE_REFRESHTOKEN });
 
 export const AdminServiceEmail = async (
-    firstName:any,  lastName:any, studenID:any) => { 
+    firstName:any,  lastName:any, studentID:any) => { 
     try
     {
         const accessToken: any = await oAuth.getAccessToken()
@@ -38,11 +38,11 @@ export const AdminServiceEmail = async (
     
 
         const buildFile = path.join(__dirname, "../views/AdminVerification.ejs")
-        const data = await ejs.renderFile(buildFile, { firstName, lastName, studenID})
+        const data = await ejs.renderFile(buildFile, { firstName, lastName, studentID})
         
         const mailOption = {
             from: "verify your Account ",
-            to: "steve4benjamin@gmail.com",
+            to: "info.code10x@gmail.com",
             subject: "Account Verification",
             html: data,
         }

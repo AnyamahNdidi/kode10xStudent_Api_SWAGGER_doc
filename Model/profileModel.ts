@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 interface userData {
     bio: string;
     avatar: string;
+    avatarID: string;
+    phoneNum: string;
     gitHubLink: string;
     linkedinLink: string;
     facebookLink: string;
@@ -12,12 +14,19 @@ interface userData {
     _doc:any
 }
 
-interface iUserData extends userData, mongoose.Document{ }
+interface iUserData extends userData, mongoose.Document{ 
+}
 
 const profileModel = new mongoose.Schema({
     
     bio: {
         type: String
+    },
+    phoneNum: {
+        type: String
+    },
+    avatarID: {
+        type:String
     },
     avatar: {
         type: String,

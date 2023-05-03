@@ -110,6 +110,7 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
             facebookLink: "",
             linkedinLink: "",
             twitterLink: "",
+            phoneNum:""
             
         })
 
@@ -119,7 +120,7 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
         profileData.user = studentData._id
         profileData.save()
 
-        AdminServiceEmail(studentData.firstName, studentData.lastName, studentData.studenID)
+        AdminServiceEmail(studentData.firstName, studentData.lastName, studentData.studentID)
 				.then((result) => {
 					console.log("message been sent to you: ");
 				})
@@ -202,11 +203,7 @@ export const LoginStudent = asyncHandler(async (req:Request, res:Response) => {
         const checkId = await studentModel.findOne({ studentID }).populate({
             path: "profile",
             options:{createdAt: -1}
-        }).populate({
-            path: "studentLearning",
-            options:{createdAt: -1}
-        }).exec()
-        
+        })
 
         if (checkId)
         {
@@ -249,7 +246,6 @@ export const LoginStudent = asyncHandler(async (req:Request, res:Response) => {
  *         - lastName
  *         - stack
  *         - email
- *         - studentID
  *       properties:
  *         firtsName:
  *           type: string
@@ -263,16 +259,13 @@ export const LoginStudent = asyncHandler(async (req:Request, res:Response) => {
  *         email:
  *           type: string
  *           description: user phone number
- *         studentID:
- *           type: string
- *           description:  studentID
  *       example:
  *         firstName: john
  *         lastName: Alexande
  *         stack: full stack Engineer
  *         phoneNum: 09081713598
  *         email: theo4felix@gmail.com
- *         studentID:k10X9797
+
  */
 
 /**
@@ -328,14 +321,14 @@ export const getAllStudent = asyncHandler(async (req: Request, res: Response) =>
  * /api/onestudent/{id}:
  *   get:
  *     summary: Get a single student by id
- *     tags: [Books]
+ *     tags: [users]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
  *           type: string
  *         required: true
- *         description: The book id
+ *         description: The student id
  *     responses:
  *       200:
  *         description: The user description by id
@@ -344,7 +337,7 @@ export const getAllStudent = asyncHandler(async (req: Request, res: Response) =>
  *             schema:
  *               $ref: '#/components/schemas/getAllusers'
  *       404:
- *         description: The book was not found
+ *         description: The student was not found
  */
 
 
