@@ -13,7 +13,7 @@ const connectMongoose = async (): Promise<Mongoose>  => {
         return conn
     } catch (error)
     {
-        console.log(`error ${error.message}`)
+        console.log(`error ${error}`)
         process.exit()
         
     }

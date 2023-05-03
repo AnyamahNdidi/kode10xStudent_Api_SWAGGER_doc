@@ -22,7 +22,7 @@ export class mainAppError extends Error {
     public readonly name: string;
     public readonly message: string;
     public readonly status: HTTP;
-    public readonly isSuccess: boolean;
+    public readonly isSuccess: boolean = true;;
 
     constructor(args: errorArgs) {
         super(args.message)
@@ -30,7 +30,7 @@ export class mainAppError extends Error {
 
         this.name = args.name;
         this.message = args.message;
-        this.status = this.status;
+        this.status = args.status;
 
         if (args.isSuccess !== undefined)
         {

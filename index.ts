@@ -23,7 +23,7 @@ app.set("view engine", "ejs")
     description: 'this is for kode10x student portal registration api build with node js',
   },
   servers: [
-    { url: 'http://localhost:9092' },
+    { url: '/' },
      ],
 //    consumes: ['application/json'],
    produces: ['application/json']
