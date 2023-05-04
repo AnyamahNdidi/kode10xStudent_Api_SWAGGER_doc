@@ -126,7 +126,7 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
 				})
             .catch((error) => console.log(error));
         
-         const { studenID, ...info } = studentData ._doc
+         const { studenID, ...info } = studentData._doc
        return res.status(201).json({
 				message: "  Registration successful Go To Admin to recieve Login id",
 				data: info,

@@ -1,10 +1,9 @@
 import express, { Request, Response } from "express";
 import studentModel from "../Model/userMondel"
-import leaningModel from "../Model/learningModel"
-import { asyncHandler } from "../AsyncHandler"
-import {mainAppError,HTTP} from "../middlewares/ErrorDefinder"
-import { AdminServiceEmail } from "../utils/emailvat"
-import { TokenGenerator } from "../utils/GenerateToken"
+import studentProject from "../Model/creatProjectModel"
+import { asyncHandler } from "../AsyncHandler";
+import { mainAppError, HTTP } from "../middlewares/ErrorDefinder"
+import userMondel from "../Model/userMondel";
 import mongoose from "mongoose";
 
 
@@ -12,12 +11,12 @@ import mongoose from "mongoose";
  * @swagger
  * components:
  *   schemas:
- *     studentlearning:
+ *     studentProject:
  *       type: object
  *       required:
  *         - title
  *         - decs
- *         - course
+ *         - url
  *       properties:
  *         title:
  *           type: string
@@ -29,19 +28,18 @@ import mongoose from "mongoose";
  *           type: string
  *           description: state the course you are in for
  *       example:
- *         title: DataTypes
- *         decs: i learn how to clear varaible
- *         course: javascript
+ *         title: online store
+ *         decs: allow user to order stuff online
+ *         url: https://www.jumia.com
  */
-
 
 
 /**
  * @swagger
- * /api/student/learning/{id}:
+ * /api/create/project/{id}:
  *   post:
- *      summary: endpoint for creating leaning
- *      tags: [learning]
+ *      summary: allow student to uplaod their project
+ *      tags: [projects]
  *      parameters:
  *        - in: path
  *          name: id
@@ -54,7 +52,7 @@ import mongoose from "mongoose";
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/studentlearning'
+ *              $ref: '#/components/schemas/studentProject'
  *      responses:
  *          '200':
  *              description: Resource added successfully
@@ -65,61 +63,53 @@ import mongoose from "mongoose";
  */
 
 
-
-
-export const createLearning = asyncHandler(async(req:Request, res:Response) => {
+export const createStudentProject = asyncHandler(async(req:Request, res:Response) => {
     try
     {
-        const { title, decs, course } = req.body
+        const { title, decs, url } = req.body;
 
-        if (!title || !decs || !course)
+         if (!title || !decs || !url)
         {
             return res.status(400).json({mesage:"please enter all field"})
         }
-        const getStudent = await studentModel.findById(req.params.id)
-
-        const createStudentLearning:any = await leaningModel.create({
-            title, 
+        
+        const getStudent = await userMondel.findById(req.params.id)
+        
+        const projectData:any = await studentProject.create({
+            title,
             decs,
-            course,
+            url,
+            projectType:"web Application",
         })
 
-        createStudentLearning.user = getStudent
-        createStudentLearning.save()
-
-        getStudent?.studentLearning.push(new mongoose.Types.ObjectId(createStudentLearning?._id))
-        getStudent!.save()
- 
+        projectData.user = getStudent,
+        projectData.save() 
         
-      const {project, profile, studentLearning, ...info} = createStudentLearning._doc
-
-
-         return res.status(HTTP.OK).json({
-            message: "learning  created successfully",
-            data: createStudentLearning
-        })
-
-
-
+        getStudent?.project.push(new mongoose.Types.ObjectId(projectData?._id))
+        getStudent?.save()
         
 
+        return res.status(201).json({
+      status: "project created successfully",
+      data: projectData,
+    });
     } catch (error)
     {
-         new mainAppError({
-            name: "Error creating leerning",
+            new mainAppError({
+            name: "Error creating student Project",
             message: "account can not be created",
             status: HTTP.BAD_REQUEST,
             isSuccess:false
-        })
+        }) 
     }
 })
 
 /**
  * @swagger
- * /api/learning/{id}:
+ * /api/project/{id}/limit:
  *   get:
- *     summary: Get a user learnig with limit of 3 
- *     tags: [learning]
+ *     summary: Get a student project with limit of 3 
+ *     tags: [projects]
  *     parameters:
  *       - in: path
  *         name: id
@@ -133,23 +123,23 @@ export const createLearning = asyncHandler(async(req:Request, res:Response) => {
  *         contens:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/getAllusers'
+ *               $ref: '#/components/schemas/studentProject'
  *       404:
  *         description: The student was not found
  */
 
 
-export const retrieveOneUserLearning = asyncHandler(async (req:Request, res:Response) => {
+export const getUserProjectWithLimit = asyncHandler(async (req:Request, res:Response) => {
   try {
-    const getLearning:any = await studentModel.findById(req.params.id).populate({
-      path: "studentLearning",
+    const getProject:any = await studentModel.findById(req.params.id).populate({
+      path: "project",
       options: {
         limit: 3,
         sort: { createdAt: -1 },
       },
     });
-
-    const {project, profile, ...info} = getLearning._doc
+      
+      const {studentLearning, profile, ...info} = getProject._doc
 
     res.status(HTTP.OK).json({
       status: "successful",
@@ -168,10 +158,10 @@ export const retrieveOneUserLearning = asyncHandler(async (req:Request, res:Resp
 
 /**
  * @swagger
- * /api/learning/{id}/all:
+ * /api/project/{id}:
  *   get:
- *     summary: Get a user learninfg with no limit
- *     tags: [learning]
+ *     summary: Get a student all project with no limit
+ *     tags: [projects]
  *     parameters:
  *       - in: path
  *         name: id
@@ -185,24 +175,24 @@ export const retrieveOneUserLearning = asyncHandler(async (req:Request, res:Resp
  *         contens:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/getAllusers'
+ *               $ref: '#/components/schemas/studentProject'
  *       404:
  *         description: The student was not found
  */
 
 
-export const getOneUserAllLearning  = asyncHandler(async (req:Request, res:Response) => {
+export const getUserAllProject= asyncHandler(async (req:Request, res:Response) => {
   try {
-    const getLearning:any = await studentModel.findById(req.params.id).populate({
-      path: "studentLearning",
+    const getProject:any = await studentModel.findById(req.params.id).populate({
+      path: "project",
       options: {
         sort: { createdAt: -1 },
       },
     });
-
-    const {project, profile, studentID, ...info} = getLearning._doc
+      
+       const {studentLearning, profile, ...info} = getProject._doc
     res.status(HTTP.OK).json({
-      status: "successful get all learning",
+      status: "successful",
       data: info,
     });
   } catch (err) {
