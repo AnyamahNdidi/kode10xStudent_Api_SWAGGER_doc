@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
-const learningController_1 = require("../controller/learningController");
-router.route("/student/learning/:id").post(learningController_1.createLearning);
-router.route("/learning/:id").get(learningController_1.retrieveOneUserLearning);
-router.route("/learning/:id/all").get(learningController_1.getOneUserAllLearning);
+const projectController_1 = require("../controller/projectController");
+router.route("/create/project/:id").post(projectController_1.createStudentProject);
+router.route("/project/:id/limit").get(projectController_1.getUserProjectWithLimit);
+router.route("/project/:id").get(projectController_1.getUserAllProject);
 exports.default = router;

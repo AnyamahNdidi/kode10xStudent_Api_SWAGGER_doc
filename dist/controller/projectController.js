@@ -23,22 +23,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOneUserAllLearning = exports.retrieveOneUserLearning = exports.createLearning = void 0;
+exports.getUserAllProject = exports.getUserProjectWithLimit = exports.createStudentProject = void 0;
 const userMondel_1 = __importDefault(require("../Model/userMondel"));
-const learningModel_1 = __importDefault(require("../Model/learningModel"));
+const creatProjectModel_1 = __importDefault(require("../Model/creatProjectModel"));
 const AsyncHandler_1 = require("../AsyncHandler");
 const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
+const userMondel_2 = __importDefault(require("../Model/userMondel"));
 const mongoose_1 = __importDefault(require("mongoose"));
 /**
  * @swagger
  * components:
  *   schemas:
- *     studentlearning:
+ *     studentProject:
  *       type: object
  *       required:
  *         - title
  *         - decs
- *         - course
+ *         - url
  *       properties:
  *         title:
  *           type: string
@@ -50,16 +51,16 @@ const mongoose_1 = __importDefault(require("mongoose"));
  *           type: string
  *           description: state the course you are in for
  *       example:
- *         title: DataTypes
- *         decs: i learn how to clear varaible
- *         course: javascript
+ *         title: online store
+ *         decs: allow user to order stuff online
+ *         url: https://www.jumia.com
  */
 /**
  * @swagger
- * /api/student/learning/{id}:
+ * /api/create/project/{id}:
  *   post:
- *      summary: endpoint for creating leaning
- *      tags: [learning]
+ *      summary: allow student to uplaod their project
+ *      tags: [projects]
  *      parameters:
  *        - in: path
  *          name: id
@@ -72,7 +73,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/studentlearning'
+ *              $ref: '#/components/schemas/studentProject'
  *      responses:
  *          '200':
  *              description: Resource added successfully
@@ -81,31 +82,31 @@ const mongoose_1 = __importDefault(require("mongoose"));
  *          '400':
  *              description: Bad request
  */
-exports.createLearning = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.createStudentProject = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { title, decs, course } = req.body;
-        if (!title || !decs || !course) {
+        const { title, decs, url } = req.body;
+        if (!title || !decs || !url) {
             return res.status(400).json({ mesage: "please enter all field" });
         }
-        const getStudent = yield userMondel_1.default.findById(req.params.id);
-        const createStudentLearning = yield learningModel_1.default.create({
+        const getStudent = yield userMondel_2.default.findById(req.params.id);
+        const projectData = yield creatProjectModel_1.default.create({
             title,
             decs,
-            course,
+            url,
+            projectType: "web Application",
         });
-        createStudentLearning.user = getStudent;
-        createStudentLearning.save();
-        getStudent === null || getStudent === void 0 ? void 0 : getStudent.studentLearning.push(new mongoose_1.default.Types.ObjectId(createStudentLearning === null || createStudentLearning === void 0 ? void 0 : createStudentLearning._id));
-        getStudent.save();
-        const _a = createStudentLearning._doc, { project, profile, studentLearning } = _a, info = __rest(_a, ["project", "profile", "studentLearning"]);
-        return res.status(ErrorDefinder_1.HTTP.OK).json({
-            message: "learning  created successfully",
-            data: createStudentLearning
+        projectData.user = getStudent,
+            projectData.save();
+        getStudent === null || getStudent === void 0 ? void 0 : getStudent.project.push(new mongoose_1.default.Types.ObjectId(projectData === null || projectData === void 0 ? void 0 : projectData._id));
+        getStudent === null || getStudent === void 0 ? void 0 : getStudent.save();
+        return res.status(201).json({
+            status: "project created successfully",
+            data: projectData,
         });
     }
     catch (error) {
         new ErrorDefinder_1.mainAppError({
-            name: "Error creating leerning",
+            name: "Error creating student Project",
             message: "account can not be created",
             status: ErrorDefinder_1.HTTP.BAD_REQUEST,
             isSuccess: false
@@ -114,10 +115,10 @@ exports.createLearning = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaite
 }));
 /**
  * @swagger
- * /api/learning/{id}:
+ * /api/project/{id}/limit:
  *   get:
- *     summary: Get a user learnig with limit of 3
- *     tags: [learning]
+ *     summary: Get a student project with limit of 3
+ *     tags: [projects]
  *     parameters:
  *       - in: path
  *         name: id
@@ -131,20 +132,20 @@ exports.createLearning = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaite
  *         contens:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/getAllusers'
+ *               $ref: '#/components/schemas/studentProject'
  *       404:
  *         description: The student was not found
  */
-exports.retrieveOneUserLearning = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getUserProjectWithLimit = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const getLearning = yield userMondel_1.default.findById(req.params.id).populate({
-            path: "studentLearning",
+        const getProject = yield userMondel_1.default.findById(req.params.id).populate({
+            path: "project",
             options: {
                 limit: 3,
                 sort: { createdAt: -1 },
             },
         });
-        const _b = getLearning._doc, { project, profile } = _b, info = __rest(_b, ["project", "profile"]);
+        const _a = getProject._doc, { studentLearning, profile } = _a, info = __rest(_a, ["studentLearning", "profile"]);
         res.status(ErrorDefinder_1.HTTP.OK).json({
             status: "successful",
             data: info,
@@ -161,10 +162,10 @@ exports.retrieveOneUserLearning = (0, AsyncHandler_1.asyncHandler)((req, res) =>
 }));
 /**
  * @swagger
- * /api/learning/{id}/all:
+ * /api/project/{id}:
  *   get:
- *     summary: Get a user learninfg with no limit
- *     tags: [learning]
+ *     summary: Get a student all project with no limit
+ *     tags: [projects]
  *     parameters:
  *       - in: path
  *         name: id
@@ -178,21 +179,21 @@ exports.retrieveOneUserLearning = (0, AsyncHandler_1.asyncHandler)((req, res) =>
  *         contens:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/getAllusers'
+ *               $ref: '#/components/schemas/studentProject'
  *       404:
  *         description: The student was not found
  */
-exports.getOneUserAllLearning = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getUserAllProject = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const getLearning = yield userMondel_1.default.findById(req.params.id).populate({
-            path: "studentLearning",
+        const getProject = yield userMondel_1.default.findById(req.params.id).populate({
+            path: "project",
             options: {
                 sort: { createdAt: -1 },
             },
         });
-        const _c = getLearning._doc, { project, profile, studentID } = _c, info = __rest(_c, ["project", "profile", "studentID"]);
+        const _b = getProject._doc, { studentLearning, profile } = _b, info = __rest(_b, ["studentLearning", "profile"]);
         res.status(ErrorDefinder_1.HTTP.OK).json({
-            status: "successful get all learning",
+            status: "successful",
             data: info,
         });
     }
