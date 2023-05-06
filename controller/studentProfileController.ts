@@ -129,14 +129,15 @@ export const editProfile = asyncHandler(async (req: Request, res: Response) => {
  *     editUsersProfile:
  *       type: object
  *       required:
- *         - avatar
+ *         - image
  *       properties:
- *         avater:
+ *         image:
  *           type: file
  *           description: The user biography
  *       example:
  *         avatar: file.jpg
  */
+
 
 /**
  * @swagger

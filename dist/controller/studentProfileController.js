@@ -121,9 +121,9 @@ exports.editProfile = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(v
  *     editUsersProfile:
  *       type: object
  *       required:
- *         - avatar
+ *         - image
  *       properties:
- *         avater:
+ *         image:
  *           type: file
  *           description: The user biography
  *       example:
