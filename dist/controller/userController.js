@@ -314,6 +314,9 @@ exports.getSingleStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awai
         }).populate({
             path: "studentLearning",
             options: { createdAt: -1 }
+        }).populate({
+            path: "project",
+            options: { createdAt: -1 }
         });
         return res.status(ErrorDefinder_1.HTTP.OK).json({
             message: "get One User",

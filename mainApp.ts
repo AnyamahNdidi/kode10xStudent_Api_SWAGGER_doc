@@ -8,6 +8,7 @@ import swaggerJsDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
 import { swaggerDocs } from "./utils/swaggerIntialixation"
 import projectRouters from "./Routers/projectRouter"
+import studentvote from "./Routers/studentVoteRouter"
 
 export const mainApp = (app:Application) => {
     
@@ -16,6 +17,7 @@ export const mainApp = (app:Application) => {
         .use("/api", learnRouter)   
         .use("/api", profileEdit)   
         .use("/api", projectRouters)   
+        .use("/api", studentvote)   
         
     //   .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
      .get("/", (req: Request, res: Response) => {

@@ -352,6 +352,9 @@ export const getSingleStudent = asyncHandler(async (req: Request, res: Response)
         }).populate({
             path: "studentLearning",
             options:{createdAt: -1}
+        }).populate({
+            path: "project",
+            options:{createdAt: -1}
         })
 
         return res.status(HTTP.OK).json({
