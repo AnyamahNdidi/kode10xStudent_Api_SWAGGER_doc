@@ -110,7 +110,8 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
             facebookLink: "",
             linkedinLink: "",
             twitterLink: "",
-            phoneNum:""
+            phoneNum: ""
+            
             
         })
 

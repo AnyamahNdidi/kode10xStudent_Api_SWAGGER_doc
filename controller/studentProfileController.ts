@@ -131,7 +131,7 @@ export const editProfile = asyncHandler(async (req: Request, res: Response) => {
  *       required:
  *         - avatar
  *       properties:
- *         avatar:
+ *         avater:
  *           type: file
  *           description: The user biography
  *       example:
@@ -175,13 +175,12 @@ export const editProfile = asyncHandler(async (req: Request, res: Response) => {
 export const editPic = asyncHandler(async(req: any, res: any) => {
     try
     {
-        const profileUser = await profileModel.findById(req.params.id);
-
-        // await cloudinary.uploader.destroy(profileUser?.avatarID!);
+		// const oldUser = await profileModel.findById(req.params.id);
+		// // await cloudinary.uploader.destroy(oldUser?.avatarID!);
 
 		// let streamUpload = (req: any) => {
 		// 	return new Promise(async (resolve: any, reject: any) => {
-		// 		let stream: string | any = await cloudinary.uploader.upload_stream(
+		// 		let stream: string | any = cloudinary.uploader.upload_stream(
 		// 			(error: any, result: Buffer) => {
 		// 				if (result) {
 		// 					return resolve(result);
@@ -194,15 +193,20 @@ export const editPic = asyncHandler(async(req: any, res: any) => {
 
 		// 		streamifier.createReadStream(req?.file!.buffer!).pipe(stream);
 		// 	});
-        // };
-        
-        // const image: any = await streamUpload(req);
+		// };
 
-        // const userProf = await profileModel.findByIdAndUpdate(
-        //     req.params.id,
-        //     { avatar: image.secure_url },
-        //     { new: true },
-        // )
+		// const image: any = await streamUpload(req);
+
+		// const user = await profileModel.findByIdAndUpdate(
+		// 	req.params.id,
+		// 	{ avatar: image.secure_url! },
+		// 	{ new: true },
+		// );
+
+		// return res.status(200).json({
+		// 	message: "user found, update done!",
+		// 	data: user,
+		// });
 
         
     const image: { secure_url: string } = await cloudinary.uploader.upload(

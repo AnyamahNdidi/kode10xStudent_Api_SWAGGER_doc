@@ -14,5 +14,5 @@ const storage = multer_1.default.diskStorage({
         cb(null, file.fieldname + "-" + uniqueSuffix + path_1.default.extname(file.originalname));
     },
 });
-const upload = (0, multer_1.default)({ storage: storage }).single("image");
+const upload = (0, multer_1.default)({ storage: storage }).single("avatar");
 exports.default = upload;

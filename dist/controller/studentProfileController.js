@@ -123,7 +123,7 @@ exports.editProfile = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(v
  *       required:
  *         - avatar
  *       properties:
- *         avatar:
+ *         avater:
  *           type: file
  *           description: The user biography
  *       example:
@@ -162,11 +162,11 @@ exports.editProfile = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(v
  */
 exports.editPic = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const profileUser = yield profileModel_1.default.findById(req.params.id);
-        // await cloudinary.uploader.destroy(profileUser?.avatarID!);
+        // const oldUser = await profileModel.findById(req.params.id);
+        // // await cloudinary.uploader.destroy(oldUser?.avatarID!);
         // let streamUpload = (req: any) => {
         // 	return new Promise(async (resolve: any, reject: any) => {
-        // 		let stream: string | any = await cloudinary.uploader.upload_stream(
+        // 		let stream: string | any = cloudinary.uploader.upload_stream(
         // 			(error: any, result: Buffer) => {
         // 				if (result) {
         // 					return resolve(result);
@@ -180,11 +180,15 @@ exports.editPic = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 
         // 	});
         // };
         // const image: any = await streamUpload(req);
-        // const userProf = await profileModel.findByIdAndUpdate(
-        //     req.params.id,
-        //     { avatar: image.secure_url },
-        //     { new: true },
-        // )
+        // const user = await profileModel.findByIdAndUpdate(
+        // 	req.params.id,
+        // 	{ avatar: image.secure_url! },
+        // 	{ new: true },
+        // );
+        // return res.status(200).json({
+        // 	message: "user found, update done!",
+        // 	data: user,
+        // });
         const image = yield cloudinary_1.default.uploader.upload(req === null || req === void 0 ? void 0 : req.file.path);
         const user = yield profileModel_1.default.findByIdAndUpdate(req.params.id, { avatar: image.secure_url }, { new: true });
         return res.status(200).json({

@@ -6,7 +6,7 @@ import upload from "../utils/multer"
 
 
 router.route("/edit/profile/:id").patch(editProfile)
-router.route("/editprofile/:id").patch(upload, editPic)
+router.route("/editprofile/:id").patch(upload,editPic)
 
 export default router;
 
