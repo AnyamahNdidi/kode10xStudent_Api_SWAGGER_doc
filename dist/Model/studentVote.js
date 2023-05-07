@@ -20,6 +20,9 @@ const studentVoteModel = new mongoose_1.default.Schema({
     role: {
         type: String
     },
+    gitHubLink: {
+        type: String
+    },
     image: {
         type: String,
     },
@@ -27,8 +30,7 @@ const studentVoteModel = new mongoose_1.default.Schema({
         type: String
     },
     user: [{
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "users"
+            type: String
         }]
 }, {
     timestamps: true,

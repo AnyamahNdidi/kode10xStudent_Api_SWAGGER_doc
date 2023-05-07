@@ -33,6 +33,9 @@ const studentVoteModel = new mongoose.Schema({
     role: {
         type: String
     },
+    gitHubLink: {
+        type: String
+    },
     image: {
         type:String,
        
@@ -42,8 +45,7 @@ const studentVoteModel = new mongoose.Schema({
     },
 
     user: [{
-      type: mongoose.Schema.Types.ObjectId,
-        ref:"users"
+      type: String
     }]
 },
  {
