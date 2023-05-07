@@ -266,7 +266,6 @@ export const LoginStudent = asyncHandler(async (req:Request, res:Response) => {
  *         stack: full stack Engineer
  *         phoneNum: 09081713598
  *         email: theo4felix@gmail.com
-
  */
 
 /**

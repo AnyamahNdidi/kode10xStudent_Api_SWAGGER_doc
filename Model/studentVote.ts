@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 
 interface voteData {
-    voter: string;
+    voters: number;
     firstName: string;
     lastName: string;
     fullName: string;
@@ -18,8 +18,8 @@ interface iVotetData extends voteData, mongoose.Document{ }
 
 const studentVoteModel = new mongoose.Schema({
     
-    voter: {
-        type: String
+    voters: {
+        type: Number
     },
     firstName: {
         type: String

@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const studentVoteModel = new mongoose_1.default.Schema({
-    voter: {
-        type: String
+    voters: {
+        type: Number
     },
     firstName: {
         type: String

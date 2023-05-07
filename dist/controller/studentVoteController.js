@@ -12,16 +12,56 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteStudentVote = exports.voteStudent = exports.createStudentForVote = void 0;
+exports.getVoteCandidate = exports.deleteStudentVote = exports.voteStudent = exports.createStudentForVote = void 0;
 const userMondel_1 = __importDefault(require("../Model/userMondel"));
 const studentVote_1 = __importDefault(require("../Model/studentVote"));
 const AsyncHandler_1 = require("../AsyncHandler");
 const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     nominatecandidate:
+ *       type: object
+ *       required:
+ *         - firstName
+ *         - lastName
+ *       properties:
+ *         firstName:
+ *           type: string
+ *           description: register student first name
+ *         lastName:
+ *           type: string
+ *           description: resgister student last Name
+ *       example:
+ *         firstName: john
+ *         lastName: deo
+ */
+/**
+ * @swagger
+ * /api/create/studentvote:
+ *   post:
+ *      summary: this end allows admin to create nominee for student to vote
+ *      tags: [student vote]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/nominatecandidate'
+ *      responses:
+ *          '200':
+ *              description: Resource added successfully
+ *          '500':
+ *              description: Internal server error
+ *          '400':
+ *              description: Bad request
+ */
 exports.createStudentForVote = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { firstName, lastName } = req.body;
         if (!firstName || !lastName) {
-            return res.status(400).json({ message: "please enter all fiembld" });
+            return res.status(400).json({ message: "please enter all field" });
         }
         const checkStudent = yield userMondel_1.default.find({ lastName, firstName }).populate("profile").exec();
         // console.log(checkStudent)
@@ -37,7 +77,7 @@ exports.createStudentForVote = (0, AsyncHandler_1.asyncHandler)((req, res) => __
             let createStudent = {
                 firstName: checkStudent[0].firstName,
                 lastName: checkStudent[0].lastName,
-                fullName: checkStudent[0].lastName + checkStudent[0].lastName,
+                fullName: checkStudent[0].firstName + checkStudent[0].lastName,
                 image: checkStudent[0].profile[0].avatar,
                 role: "student of the week",
                 gitHubLink: checkStudent[0].profile[0].gitHubLink
@@ -63,20 +103,49 @@ exports.createStudentForVote = (0, AsyncHandler_1.asyncHandler)((req, res) => __
         });
     }
 }));
+/**
+ * @swagger
+ * /api/{id}/{studentID}/vote:
+ *   patch:
+ *     summary: endpoint that allows student to vote for favourties candidate
+ *     tags: [student vote]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The nominate id
+ *       - in: path
+ *         name: studentID
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The student id
+ *     responses:
+ *       200:
+ *         description: The user description by id
+ *         contens:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/nominatecandidate'
+ *       404:
+ *         description: The student was not found
+ */
 exports.voteStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        const userVotingID = req.params.userVotingID;
-        let checkItem = yield studentVote_1.default.find({ user: { $in: [userVotingID] } }).exec();
+        const studentID = req.params.studentID;
+        let checkItem = yield studentVote_1.default.find({ user: { $in: [studentID] } }).exec();
         console.log("check", checkItem);
         if (!(checkItem.length > 0)) {
             const voted = yield studentVote_1.default.findByIdAndUpdate(id, {
-                $push: { user: userVotingID },
+                $push: { user: studentID },
             }, { new: true });
             const getUser = yield studentVote_1.default.findById(id);
             const votersData = getUser === null || getUser === void 0 ? void 0 : getUser.user.length;
             yield studentVote_1.default.findByIdAndUpdate(req.params.id, {
-                voter: votersData,
+                voters: votersData,
             }, { new: true });
             console.log(votersData);
             return res.status(201).json({
@@ -89,7 +158,7 @@ exports.voteStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(v
         }
         else {
             return res.status(201).json({
-                message: 'user has  already voted before'
+                message: 'user has already voted before'
             });
         }
     }
@@ -105,20 +174,49 @@ exports.voteStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(v
         // })
     }
 }));
+/**
+ * @swagger
+ * /api/{id}/{studentID}/deletevote:
+ *   patch:
+ *     summary: endpoint that allows student to unvote
+ *     tags: [student vote]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The nominate id
+ *       - in: path
+ *         name: studentID
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The student id
+ *     responses:
+ *       200:
+ *         description: The user description by id
+ *         contens:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/nominatecandidate'
+ *       404:
+ *         description: The student was not found
+ */
 exports.deleteStudentVote = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        const userVotingID = req.params.userVotingID;
-        let checkItem = yield studentVote_1.default.find({ user: { $in: [userVotingID] } }).exec();
-        console.log("check", checkItem);
+        const studentID = req.params.studentID;
+        let checkItem = yield studentVote_1.default.find({ user: { $in: [studentID] } }).exec();
+        // console.log("check", checkItem)
         if (checkItem.length > 0) {
             const voted = yield studentVote_1.default.findByIdAndUpdate(id, {
-                $pull: { user: userVotingID },
+                $pull: { user: studentID },
             }, { new: true });
             const getUser = yield studentVote_1.default.findById(id);
             const votersData = getUser === null || getUser === void 0 ? void 0 : getUser.user.length;
             yield studentVote_1.default.findByIdAndUpdate(req.params.id, {
-                voter: votersData,
+                voters: votersData,
             }, { new: true });
             console.log(votersData);
             return res.status(201).json({
@@ -141,5 +239,85 @@ exports.deleteStudentVote = (0, AsyncHandler_1.asyncHandler)((req, res) => __awa
         //     status: HTTP.BAD_REQUEST,
         //     isSuccess:false
         // })
+    }
+}));
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     getAllvotingcandidate:
+ *       type: object
+ *       required:
+ *         - firstName
+ *         - lastName
+ *         - fullName
+ *         - role
+ *         - gitHubLink
+ *         - image
+ *         - user
+ *         - voters
+ *       properties:
+ *         firtsName:
+ *           type: string
+ *           description: user first name
+ *         lastName:
+ *           type: string
+ *           description: user last name
+ *         fullName:
+ *           type: string
+ *           description: full name of user
+ *         role:
+ *           type: string
+ *           description: role candidate is nominated for
+ *         gitHubLink:
+ *           type: string
+ *           description: candidate git hub repo
+ *         user:
+ *           type: array
+ *           description: all voters id
+ *         image:
+ *           type: string
+ *           description: candidate image
+ *         voters:
+ *           type: number
+ *           description: total vote of candidate
+ *       example:
+ *         firstName: john
+ *         lastName: Alexande
+ *         fullName: john Alexande
+ *         role: student of the week
+ *         gitHubLink: https://github.com/johnAlexande
+ *         user: ["94859449","94854"]
+ *         image: https://avatars.githubusercontent.com/
+ *         voters: 1
+ */
+/**
+ * @swagger
+ * /api/all/candidate:
+ *   get:
+ *     summary: Returns the list of all candidates
+ *     tags: [student vote]
+ *     responses:
+ *       200:
+ *         description: The list of the student
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/getAllvotingcandidate'
+ */
+exports.getVoteCandidate = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const readAllVOte = yield studentVote_1.default.find();
+        return res.status(ErrorDefinder_1.HTTP.OK).json({ message: "Reading all Voters", data: readAllVOte });
+    }
+    catch (error) {
+        new ErrorDefinder_1.mainAppError({
+            name: "Error in getting all voted student",
+            message: "account can not be created",
+            status: ErrorDefinder_1.HTTP.BAD_REQUEST,
+            isSuccess: false
+        });
     }
 }));

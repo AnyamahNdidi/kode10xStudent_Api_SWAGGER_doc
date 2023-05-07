@@ -242,7 +242,6 @@ exports.LoginStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(
  *         stack: full stack Engineer
  *         phoneNum: 09081713598
  *         email: theo4felix@gmail.com
-
  */
 /**
  * @swagger
