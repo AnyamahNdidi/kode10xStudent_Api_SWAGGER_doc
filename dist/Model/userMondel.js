@@ -28,6 +28,15 @@ const userModel = new mongoose_1.default.Schema({
             type: mongoose_1.default.Schema.Types.ObjectId,
             ref: "projects"
         }],
+    weeklyratingcourse: [{
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: "courseratings"
+        }],
+    // studentrating: [{
+    // 		    course: { type: String, required: true },
+    // 			rate: { type: Number, required: true },
+    // 			// portion: { type: Number, default: 1 },
+    // 		}],
     studentLearning: [{
             type: mongoose_1.default.Schema.Types.ObjectId,
             ref: "learnings"

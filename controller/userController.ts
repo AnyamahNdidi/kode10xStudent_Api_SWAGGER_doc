@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response,NextFunction } from "express";
 import studentModel from "../Model/userMondel"
 import { asyncHandler } from "../AsyncHandler"
 import {mainAppError,HTTP} from "../middlewares/ErrorDefinder"
@@ -314,6 +314,8 @@ export const getAllStudent = asyncHandler(async (req: Request, res: Response) =>
     }
 
 })
+
+
  
 
 /**
@@ -341,7 +343,7 @@ export const getAllStudent = asyncHandler(async (req: Request, res: Response) =>
  */
 
 
-export const getSingleStudent = asyncHandler(async (req: Request, res: Response) => {
+export const getSingleStudent = asyncHandler(async (req: Request, res: Response, next:NextFunction) => {
 
     try
     {
@@ -354,6 +356,10 @@ export const getSingleStudent = asyncHandler(async (req: Request, res: Response)
         }).populate({
             path: "project",
             options:{createdAt: -1}
+        }).populate({
+            path: "weeklyratingcourse",
+            select: 'date allweeklyrating properDate',
+            options:{createdAt: -1}
         })
 
         return res.status(HTTP.OK).json({
@@ -363,12 +369,16 @@ export const getSingleStudent = asyncHandler(async (req: Request, res: Response)
         
     } catch (error)
     {
-          new mainAppError({
-            name: "Error in Fetchibg all User",
+
+        next(
+         new mainAppError({
+            name: "Error in Fetchibg all one single user",
             message: "can get all user",
             status: HTTP.BAD_REQUEST,
             isSuccess:false
         })
+        )
+
     }
 
  })

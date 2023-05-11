@@ -11,6 +11,7 @@ interface userData {
     email: string;
     studentID: string;
     studentLearning: any[];
+    weeklyratingcourse: any[];
     _doc:any
 }
 
@@ -41,6 +42,16 @@ const userModel = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:"projects"
     }],
+    weeklyratingcourse: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"courseratings"
+    }],
+
+    // studentrating: [{
+	// 		    course: { type: String, required: true },
+	// 			rate: { type: Number, required: true },
+	// 			// portion: { type: Number, default: 1 },
+	// 		}],
 
     studentLearning: [{
         type: mongoose.Schema.Types.ObjectId,

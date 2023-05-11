@@ -4,11 +4,9 @@ import { errorHandler } from "./middlewares/ErrorHandler"
 import studentRouter from "./Routers/studentRouter"
 import learnRouter from "./Routers/learningRouter"
 import profileEdit from "./Routers/profileEditRouter"
-import swaggerJsDoc from "swagger-jsdoc"
-import swaggerUi from "swagger-ui-express"
-import { swaggerDocs } from "./utils/swaggerIntialixation"
 import projectRouters from "./Routers/projectRouter"
 import studentvote from "./Routers/studentVoteRouter"
+import rateRouter from "./Routers/ratingRouter"
 import passport from "passport";
 import cookie from "cookie-session";
 import "./controller/socailController"
@@ -21,6 +19,7 @@ export const mainApp = (app:Application) => {
         .use("/api", profileEdit)
         .use("/api", projectRouters)
         .use("/api", studentvote)
+        .use("/api", rateRouter)
         .use(cookie({
             name: "session",
             keys: ["key1", "keys2"],

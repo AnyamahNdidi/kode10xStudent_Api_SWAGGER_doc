@@ -305,7 +305,7 @@ exports.getAllStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter
  *       404:
  *         description: The student was not found
  */
-exports.getSingleStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getSingleStudent = (0, AsyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const oneUser = yield userMondel_1.default.findById(req.params.id).populate({
             path: "profile",
@@ -316,6 +316,10 @@ exports.getSingleStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awai
         }).populate({
             path: "project",
             options: { createdAt: -1 }
+        }).populate({
+            path: "weeklyratingcourse",
+            select: 'date allweeklyrating properDate',
+            options: { createdAt: -1 }
         });
         return res.status(ErrorDefinder_1.HTTP.OK).json({
             message: "get One User",
@@ -323,11 +327,11 @@ exports.getSingleStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awai
         });
     }
     catch (error) {
-        new ErrorDefinder_1.mainAppError({
-            name: "Error in Fetchibg all User",
+        next(new ErrorDefinder_1.mainAppError({
+            name: "Error in Fetchibg all one single user",
             message: "can get all user",
             status: ErrorDefinder_1.HTTP.BAD_REQUEST,
             isSuccess: false
-        });
+        }));
     }
 }));
