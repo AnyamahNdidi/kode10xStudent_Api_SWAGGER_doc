@@ -76,6 +76,7 @@ export const studentRating = asyncHandler(async (req: Request, res: Response, ne
         }
         
         const ratingUser:any = await req.body.allweeklyrating.map((rating:any) => {
+            
             return {
                 course: rating.course,
                 rate: rating.rate,

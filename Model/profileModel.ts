@@ -7,6 +7,7 @@ interface userData {
     avatarID: string;
     phoneNum: string;
     gitHubLink: string;
+    youtubeUrl: string;
     linkedinLink: string;
     facebookLink: string;
     twitterLink: string;
@@ -33,6 +34,9 @@ const profileModel = new mongoose.Schema({
         default:"https://res.cloudinary.com/ndtech/image/upload/v1683028487/24-248253_user-profile-default-image-png-clipart-png-download_b7feyx.png"
     },
     gitHubLink: {
+        type: String
+    },
+    youtubeUrl: {
         type: String
     },
     linkedinLink: {

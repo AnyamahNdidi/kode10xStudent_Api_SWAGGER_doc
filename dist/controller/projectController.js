@@ -40,6 +40,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
  *         - title
  *         - decs
  *         - url
+ *         - tools
  *       properties:
  *         title:
  *           type: string
@@ -47,13 +48,20 @@ const mongoose_1 = __importDefault(require("mongoose"));
  *         decs:
  *           type: string
  *           description: brief description of what you learn
- *         course:
+ *         url:
  *           type: string
- *           description: state the course you are in for
+ *           description: put project url
+ *         tools:
+ *           type: array
+ *           description:  elements of tools used in building the project
  *       example:
  *         title: online store
  *         decs: allow user to order stuff online
  *         url: https://www.jumia.com
+ *         tools:
+ *           - "reactjs"
+ *           - "nodejs"
+ *           - "ejs"
  */
 /**
  * @swagger
@@ -89,10 +97,24 @@ exports.createStudentProject = (0, AsyncHandler_1.asyncHandler)((req, res) => __
             return res.status(400).json({ mesage: "please enter all field" });
         }
         const getStudent = yield userMondel_2.default.findById(req.params.id);
+        const allTools = [];
+        yield req.body.tools.forEach((tool) => {
+            if (typeof tool === "string") {
+                return allTools.push(tool);
+            }
+            else if (typeof tool === "object") {
+                return allTools.push(tool);
+            }
+            else if (typeof tool === "number") {
+                return allTools.push(tool);
+            }
+        });
+        console.log(allTools);
         const projectData = yield creatProjectModel_1.default.create({
             title,
             decs,
             url,
+            tools: allTools,
             projectType: "web Application",
         });
         projectData.user = getStudent,

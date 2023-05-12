@@ -107,6 +107,7 @@ exports.registerStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __await
             firstName,
             lastName,
             stack,
+            cohort: "COHORT 1",
             studentID: generateStudentId()
         });
         const profileData = yield profileModel_1.default.create({
@@ -223,6 +224,7 @@ exports.LoginStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(
  *         - lastName
  *         - stack
  *         - email
+ *         - cohort
  *       properties:
  *         firtsName:
  *           type: string
@@ -236,6 +238,9 @@ exports.LoginStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(
  *         email:
  *           type: string
  *           description: user phone number
+ *         cohort:
+ *           type: string
+ *           description: default cohort 1
  *       example:
  *         firstName: john
  *         lastName: Alexande

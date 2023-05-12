@@ -17,6 +17,9 @@ const userModel = new mongoose_1.default.Schema({
     email: {
         type: String
     },
+    cohort: {
+        type: String
+    },
     studentID: {
         type: String
     },

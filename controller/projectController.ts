@@ -17,6 +17,7 @@ import mongoose from "mongoose";
  *         - title
  *         - decs
  *         - url
+ *         - tools
  *       properties:
  *         title:
  *           type: string
@@ -24,13 +25,20 @@ import mongoose from "mongoose";
  *         decs:
  *           type: string
  *           description: brief description of what you learn
- *         course:
+ *         url:
  *           type: string
- *           description: state the course you are in for
+ *           description: put project url
+ *         tools:
+ *           type: array
+ *           description:  elements of tools used in building the project
  *       example:
  *         title: online store
  *         decs: allow user to order stuff online
  *         url: https://www.jumia.com
+ *         tools: 
+ *           - "reactjs"
+ *           - "nodejs"
+ *           - "ejs"
  */
 
 
@@ -75,10 +83,25 @@ export const createStudentProject = asyncHandler(async(req:Request, res:Response
         
         const getStudent = await userMondel.findById(req.params.id)
         
+      const allTools: any[] = []
+      
+      await req.body.tools.forEach((tool: any) => {
+          if (typeof tool === "string") {
+               return allTools.push(tool)
+              } else if (typeof tool === "object") {
+            return allTools.push(tool)
+          } else if (typeof tool === "number")
+          {
+             return allTools.push(tool)
+              }
+      })
+      
+      console.log(allTools)
         const projectData:any = await studentProject.create({
             title,
             decs,
             url,
+            tools:allTools,
             projectType:"web Application",
         })
 

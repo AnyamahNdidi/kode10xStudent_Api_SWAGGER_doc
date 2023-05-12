@@ -5,6 +5,7 @@ interface userData {
     firstName: string;
     lastName: string;
     stack: string;
+    cohort: string;
     phoneNum: string;
     profile: any[];
     project: any[];
@@ -29,6 +30,9 @@ const userModel = new mongoose.Schema({
         type: String
     },
     email: {
+        type: String 
+    },
+    cohort: {
         type: String 
     },
     studentID: {

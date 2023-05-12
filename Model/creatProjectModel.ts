@@ -6,7 +6,7 @@ interface projectData {
     decs: string;
     projectType: string;
     url: string;
-    tools: [];
+    tools: any[];
     user:  {};
     _doc:any
 }
@@ -24,10 +24,7 @@ const learningModel = new mongoose.Schema({
     projectType: {
         type: String
     },
-    tools: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"tools"
-    }],
+    tools: { type : Array , "default" : [] },
     url: {
         type: String 
     },

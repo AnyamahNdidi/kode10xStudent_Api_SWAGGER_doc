@@ -21,6 +21,9 @@ const profileModel = new mongoose_1.default.Schema({
     gitHubLink: {
         type: String
     },
+    youtubeUrl: {
+        type: String
+    },
     linkedinLink: {
         type: String
     },

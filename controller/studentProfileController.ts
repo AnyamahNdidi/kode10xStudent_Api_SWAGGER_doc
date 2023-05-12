@@ -18,6 +18,7 @@ import { mainAppError, HTTP } from "../middlewares/ErrorDefinder"
  *         - bio
  *         - phoneNum
  *         - gitHubLink
+ *         - youtubeUrl
  *         - linkedinLink
  *         - facebookLink
  *         - twitterLink
@@ -27,7 +28,10 @@ import { mainAppError, HTTP } from "../middlewares/ErrorDefinder"
  *           description: The user biography
  *         gitHubLink:
  *           type: string
- *           description: The user last name
+ *           description: The user gitHubLink
+ *         youtubeUrl:
+ *           type: string
+ *           description: The user youtube link
  *         linkedinLink:
  *           type: string
  *           description: preferr stack
@@ -41,6 +45,7 @@ import { mainAppError, HTTP } from "../middlewares/ErrorDefinder"
  *         bio: about your self........
  *         phoneNum: about your self........
  *         gitHubLink: https://github.com/gideonekeke
+ *         youtubeUrl: https://github.com/gideonekeke
  *         linkedinLink: https://linkedle.com/gideonekeke
  *         facebookLink: https://facebook.com/gideonekeke
  *         twitterLink: https://teitter.com/gideonekeke
@@ -83,7 +88,7 @@ export const editProfile = asyncHandler(async (req: Request, res: Response) => {
     try
     {
        
-        const { bio, gitHubLink, linkedinLink, facebookLink, twitterLink,phoneNum } = req.body
+        const { bio, gitHubLink, linkedinLink, facebookLink, twitterLink,phoneNum,youtubeUrl } = req.body
         
         //  if (!bio || !gitHubLink || !linkedinLink  || !facebookLink || !twitterLink)
         //     {
@@ -96,6 +101,7 @@ export const editProfile = asyncHandler(async (req: Request, res: Response) => {
                 bio,
                 phoneNum,
                 gitHubLink,
+                youtubeUrl,
                 linkedinLink,
                 facebookLink,
                 twitterLink

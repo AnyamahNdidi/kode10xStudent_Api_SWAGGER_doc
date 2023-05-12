@@ -14,10 +14,7 @@ const learningModel = new mongoose_1.default.Schema({
     projectType: {
         type: String
     },
-    tools: [{
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "tools"
-        }],
+    tools: { type: Array, "default": [] },
     url: {
         type: String
     },

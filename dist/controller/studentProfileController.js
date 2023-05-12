@@ -27,6 +27,7 @@ const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
  *         - bio
  *         - phoneNum
  *         - gitHubLink
+ *         - youtubeUrl
  *         - linkedinLink
  *         - facebookLink
  *         - twitterLink
@@ -36,7 +37,10 @@ const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
  *           description: The user biography
  *         gitHubLink:
  *           type: string
- *           description: The user last name
+ *           description: The user gitHubLink
+ *         youtubeUrl:
+ *           type: string
+ *           description: The user youtube link
  *         linkedinLink:
  *           type: string
  *           description: preferr stack
@@ -50,6 +54,7 @@ const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
  *         bio: about your self........
  *         phoneNum: about your self........
  *         gitHubLink: https://github.com/gideonekeke
+ *         youtubeUrl: https://github.com/gideonekeke
  *         linkedinLink: https://linkedle.com/gideonekeke
  *         facebookLink: https://facebook.com/gideonekeke
  *         twitterLink: https://teitter.com/gideonekeke
@@ -87,7 +92,7 @@ const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
  */
 exports.editProfile = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { bio, gitHubLink, linkedinLink, facebookLink, twitterLink, phoneNum } = req.body;
+        const { bio, gitHubLink, linkedinLink, facebookLink, twitterLink, phoneNum, youtubeUrl } = req.body;
         //  if (!bio || !gitHubLink || !linkedinLink  || !facebookLink || !twitterLink)
         //     {
         //         return res.status(400).json({message:"please enter all field"})
@@ -96,6 +101,7 @@ exports.editProfile = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(v
             bio,
             phoneNum,
             gitHubLink,
+            youtubeUrl,
             linkedinLink,
             facebookLink,
             twitterLink

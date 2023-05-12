@@ -100,6 +100,7 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
             firstName,
             lastName,
             stack,
+            cohort:"COHORT 1",
             studentID:generateStudentId()
         })
 
@@ -247,6 +248,7 @@ export const LoginStudent = asyncHandler(async (req:Request, res:Response) => {
  *         - lastName
  *         - stack
  *         - email
+ *         - cohort
  *       properties:
  *         firtsName:
  *           type: string
@@ -260,6 +262,9 @@ export const LoginStudent = asyncHandler(async (req:Request, res:Response) => {
  *         email:
  *           type: string
  *           description: user phone number
+ *         cohort:
+ *           type: string
+ *           description: default cohort 1
  *       example:
  *         firstName: john
  *         lastName: Alexande
