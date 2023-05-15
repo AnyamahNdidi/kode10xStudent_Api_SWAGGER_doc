@@ -108,10 +108,12 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
             _id:studentData._id,
             bio: "",
             gitHubLink: "",
+            youtubeUrl:"",
             facebookLink: "",
             linkedinLink: "",
             twitterLink: "",
-            phoneNum: ""
+            phoneNum: "",
+            
             
             
         })
