@@ -23,7 +23,7 @@ const GOOGLE_REDIRECT = "https://developers.google.com/oauthplayground";
 const GOOGLE_REFRESHTOKEN = "1//04Y5AsDKQNfTvCgYIARAAGAQSNwF-L9IrlXB3BZV31aPR2nzemx4DkcLXimEb9aD4eIngPXPQ_gW2-Rt8N3LdFNGA-gkmDKTc0Sc";
 const oAuth = new googleapis_1.google.auth.OAuth2(GOOGLE_ID, GOOGLE_SECRET, GOOGLE_REDIRECT);
 oAuth.setCredentials({ refresh_token: GOOGLE_REFRESHTOKEN });
-const AdminServiceEmail = (firstName, lastName, studentID) => __awaiter(void 0, void 0, void 0, function* () {
+const AdminServiceEmail = (firstName, lastName, matricNumber) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accessToken = yield oAuth.getAccessToken();
         const transport = nodemailer_1.default.createTransport({
@@ -38,7 +38,7 @@ const AdminServiceEmail = (firstName, lastName, studentID) => __awaiter(void 0, 
             }
         });
         const buildFile = path_1.default.join(__dirname, "../views/AdminVerification.ejs");
-        const data = yield ejs_1.default.renderFile(buildFile, { firstName, lastName, studentID });
+        const data = yield ejs_1.default.renderFile(buildFile, { firstName, lastName, matricNumber });
         const mailOption = {
             from: "verify your Account ",
             to: "info.code10x@gmail.com",

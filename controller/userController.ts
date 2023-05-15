@@ -7,18 +7,18 @@ import { TokenGenerator } from "../utils/GenerateToken"
 import profileModel from "../Model/profileModel"
 import mongoose from "mongoose"
 
-function generateStudentId() {
-	const characters =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	const length = 4;
-	let randomId = "K10X";
-	for (let i = 0; i < length; i++) {
-		randomId += characters.charAt(
-			Math.floor(Math.random() * characters.length),
-		);
-	}
-	return randomId;
-}
+// function generateStudentId() {
+// 	const characters =
+// 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+// 	const length = 4;
+// 	let randomId = "K10X";
+// 	for (let i = 0; i < length; i++) {
+// 		randomId += characters.charAt(
+// 			Math.floor(Math.random() * characters.length),
+// 		);
+// 	}
+// 	return randomId;
+// }
 
 
 /**
@@ -95,13 +95,30 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
                 return res.status(401).json({message:"email already exist"})
         }
 
+        let autoNum: any = (await studentModel.find()).length
+         
+        function generateMatricNum() {
+        let matricNum:string="";
+         if (autoNum < 9)
+        {
+            return  matricNum +=`KX01/FS-0${autoNum +1}-2023`     
+        }
+        if (autoNum >= 9)
+        {
+            return  matricNum +=`KX01/FS-${autoNum +1}-2023`     
+        }
+       
+        } 
+       
         const studentData = await studentModel.create({
             email,
             firstName,
             lastName,
             stack,
-            cohort:"COHORT 1",
-            studentID:generateStudentId()
+            password: `${firstName.toLowerCase()}${lastName.toLowerCase()}`,
+            cohort: "COHORT 1",
+            matricNumber:generateMatricNum()
+            // studentID:generateStudentId()
         })
 
         const profileData = await profileModel.create({
@@ -124,11 +141,11 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
         profileData.user = studentData._id
         profileData.save()
 
-        AdminServiceEmail(studentData.firstName, studentData.lastName, studentData.studentID)
-				.then((result) => {
+        AdminServiceEmail(studentData.firstName, studentData.lastName, studentData.matricNumber)
+				.then((result:any) => {
 					console.log("message been sent to you: ");
 				})
-            .catch((error) => console.log(error));
+            .catch((error:any) => console.log(error));
         
          const { studenID, ...info } = studentData._doc
        return res.status(201).json({
@@ -155,16 +172,21 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
  * @swagger
  * components:
  *   schemas:
- *     loginUsers:
+ *     userslogin:
  *       type: object
  *       required:
- *         - studentID
+ *         - matricNumber
+ *         - password
  *       properties:
- *         studentID:
+ *         matricNumber:
  *           type: string
- *           description: user can log in
- *     example:
- *       studentID: K10Xo2p6
+ *           description: user matric id
+ *         password:
+ *           type: string
+ *           description: combinations of firstName and LastName
+ *       example:
+ *         matricNumber: KX01/FS-11-2023
+ *         password: peterjohn
  */
 
 
@@ -181,7 +203,7 @@ export const registerStudent = asyncHandler(async (req:Request, res:Response) =>
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/loginUsers'
+ *              $ref: '#/components/schemas/userslogin'
  *      responses:
  *          '200':
  *              description: Resource added successfully
@@ -197,32 +219,45 @@ export const LoginStudent = asyncHandler(async (req:Request, res:Response) => {
     try     
     {
         
-        const { studentID } = req.body
+        const { matricNumber, password } = req.body
          
-         if (!studentID )
+         if (!matricNumber || !password) 
             {
                 return res.status(400).json({mesage:"field can't be empty"})
         }
         
-        const checkId = await studentModel.findOne({ studentID }).populate({
+        const checkId = await studentModel.findOne({ matricNumber }).populate({
             path: "profile",
             options:{createdAt: -1}
         })
 
         if (checkId)
         {
-              const { ...info } = checkId._doc
-              const token = TokenGenerator({info })
-              return res.status(HTTP.OK).json({
+             const matchPassword = await checkId.matchPassword(password)
+                if (matchPassword)
+                {
+                    const { password, ...info } = checkId._doc
+                    
+                    const token = TokenGenerator({ info })
+                    console.log(token)
+
+                    return res.status(HTTP.OK).json({
                         message: "login success",
                         data: info,
                         token: token
                     })
+                    
+
+                    
+                } else
+                {
+                     return res.status(HTTP.BAD_REQUEST).json({ message:"wrong password" })
+                }
             
         } else
         {
            return res.status(HTTP.BAD_REQUEST).json({
-                    messeage :"StudentID can't be  found",
+                    messeage :"Matric Number Can't Be  Found",
                 })
         }
         

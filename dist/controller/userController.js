@@ -31,15 +31,18 @@ const emailvat_1 = require("../utils/emailvat");
 const GenerateToken_1 = require("../utils/GenerateToken");
 const profileModel_1 = __importDefault(require("../Model/profileModel"));
 const mongoose_1 = __importDefault(require("mongoose"));
-function generateStudentId() {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const length = 4;
-    let randomId = "K10X";
-    for (let i = 0; i < length; i++) {
-        randomId += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return randomId;
-}
+// function generateStudentId() {
+// 	const characters =
+// 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+// 	const length = 4;
+// 	let randomId = "K10X";
+// 	for (let i = 0; i < length; i++) {
+// 		randomId += characters.charAt(
+// 			Math.floor(Math.random() * characters.length),
+// 		);
+// 	}
+// 	return randomId;
+// }
 /**
  * @swagger
  * components:
@@ -102,28 +105,41 @@ exports.registerStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __await
         if (usesExist) {
             return res.status(401).json({ message: "email already exist" });
         }
+        let autoNum = (yield userMondel_1.default.find()).length;
+        function generateMatricNum() {
+            let matricNum = "";
+            if (autoNum < 9) {
+                return matricNum += `KX01/FS-0${autoNum + 1}-2023`;
+            }
+            if (autoNum >= 9) {
+                return matricNum += `KX01/FS-${autoNum + 1}-2023`;
+            }
+        }
         const studentData = yield userMondel_1.default.create({
             email,
             firstName,
             lastName,
             stack,
+            password: `${firstName.toLowerCase()}${lastName.toLowerCase()}`,
             cohort: "COHORT 1",
-            studentID: generateStudentId()
+            matricNumber: generateMatricNum()
+            // studentID:generateStudentId()
         });
         const profileData = yield profileModel_1.default.create({
             _id: studentData._id,
             bio: "",
             gitHubLink: "",
+            youtubeUrl: "",
             facebookLink: "",
             linkedinLink: "",
             twitterLink: "",
-            phoneNum: ""
+            phoneNum: "",
         });
         studentData === null || studentData === void 0 ? void 0 : studentData.profile.push(new mongoose_1.default.Types.ObjectId(profileData === null || profileData === void 0 ? void 0 : profileData._id));
         studentData === null || studentData === void 0 ? void 0 : studentData.save();
         profileData.user = studentData._id;
         profileData.save();
-        (0, emailvat_1.AdminServiceEmail)(studentData.firstName, studentData.lastName, studentData.studentID)
+        (0, emailvat_1.AdminServiceEmail)(studentData.firstName, studentData.lastName, studentData.matricNumber)
             .then((result) => {
             console.log("message been sent to you: ");
         })
@@ -147,16 +163,21 @@ exports.registerStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __await
  * @swagger
  * components:
  *   schemas:
- *     loginUsers:
+ *     userslogin:
  *       type: object
  *       required:
- *         - studentID
+ *         - matricNumber
+ *         - password
  *       properties:
- *         studentID:
+ *         matricNumber:
  *           type: string
- *           description: user can log in
- *     example:
- *       studentID: K10Xo2p6
+ *           description: user matric id
+ *         password:
+ *           type: string
+ *           description: combinations of firstName and LastName
+ *       example:
+ *         matricNumber: KX01/FS-11-2023
+ *         password: peterjohn
  */
 /**
  * @swagger
@@ -170,7 +191,7 @@ exports.registerStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __await
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/loginUsers'
+ *              $ref: '#/components/schemas/userslogin'
  *      responses:
  *          '200':
  *              description: Resource added successfully
@@ -181,26 +202,33 @@ exports.registerStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __await
  */
 exports.LoginStudent = (0, AsyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { studentID } = req.body;
-        if (!studentID) {
+        const { matricNumber, password } = req.body;
+        if (!matricNumber || !password) {
             return res.status(400).json({ mesage: "field can't be empty" });
         }
-        const checkId = yield userMondel_1.default.findOne({ studentID }).populate({
+        const checkId = yield userMondel_1.default.findOne({ matricNumber }).populate({
             path: "profile",
             options: { createdAt: -1 }
         });
         if (checkId) {
-            const info = __rest(checkId._doc, []);
-            const token = (0, GenerateToken_1.TokenGenerator)({ info });
-            return res.status(ErrorDefinder_1.HTTP.OK).json({
-                message: "login success",
-                data: info,
-                token: token
-            });
+            const matchPassword = yield checkId.matchPassword(password);
+            if (matchPassword) {
+                const _b = checkId._doc, { password } = _b, info = __rest(_b, ["password"]);
+                const token = (0, GenerateToken_1.TokenGenerator)({ info });
+                console.log(token);
+                return res.status(ErrorDefinder_1.HTTP.OK).json({
+                    message: "login success",
+                    data: info,
+                    token: token
+                });
+            }
+            else {
+                return res.status(ErrorDefinder_1.HTTP.BAD_REQUEST).json({ message: "wrong password" });
+            }
         }
         else {
             return res.status(ErrorDefinder_1.HTTP.BAD_REQUEST).json({
-                messeage: "StudentID can't be  found",
+                messeage: "Matric Number Can't Be  Found",
             });
         }
     }

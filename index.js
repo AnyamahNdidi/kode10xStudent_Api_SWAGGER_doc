@@ -1,13 +1,13 @@
-var fs = require("fs");
+// var fs = require("fs");
 
 
 
-fs.readFile('http_request_response.pdf', 'utf8', function(err, data) {
+// fs.readFile('http_request_response.pdf', 'utf8', function(err, data) {
    
    
-    const userData = data.toString('base64');
-     console.log(userData)
-});
+//     const userData = data.toString('base64');
+//      console.log(userData)
+// });
 
 
 // console.log("ghjkl;")
@@ -34,3 +34,15 @@ fs.readFile('http_request_response.pdf', 'utf8', function(err, data) {
 
 //   console.log('File converted successfully');
 // });
+
+
+    let auto = 0;
+const generateMatric = () => {
+    auto++
+    let userMatric= `kx01/FU-${auto}-2023`
+
+    return userMatric
+
+}
+
+console.log(generateMatric())

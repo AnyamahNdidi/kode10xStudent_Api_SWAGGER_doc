@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 
 interface userData {
@@ -7,12 +8,15 @@ interface userData {
     stack: string;
     cohort: string;
     phoneNum: string;
+    role:string;
     profile: any[];
     project: any[];
     email: string;
-    studentID: string;
+    password: string;
+    matricNumber: string;
     studentLearning: any[];
     weeklyratingcourse: any[];
+    matchPassword(enterpassword: string): Promise<boolean>;
     _doc:any
 }
 
@@ -32,10 +36,18 @@ const userModel = new mongoose.Schema({
     email: {
         type: String 
     },
+    password: {
+        type: String 
+    },
     cohort: {
         type: String 
     },
-    studentID: {
+     role: {
+      type: String,
+      enum: ["user", "admin", "super-admin"],
+      default: "user",
+    },
+    matricNumber: {
         type: String 
     },
     profile: [{
@@ -67,5 +79,20 @@ const userModel = new mongoose.Schema({
     }
 
 )
+
+userModel.methods.matchPassword = async function (enterpassword: any) {
+     return await bcrypt.compare(enterpassword, this.password)
+}
+    
+
+
+userModel.pre('save', async function (this:iUserData, next:any) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  const salt: string = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
 
 export default mongoose.model<iUserData>("users",  userModel )
