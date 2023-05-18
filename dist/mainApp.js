@@ -13,6 +13,7 @@ const profileEditRouter_1 = __importDefault(require("./Routers/profileEditRouter
 const projectRouter_1 = __importDefault(require("./Routers/projectRouter"));
 const studentVoteRouter_1 = __importDefault(require("./Routers/studentVoteRouter"));
 const ratingRouter_1 = __importDefault(require("./Routers/ratingRouter"));
+const adminRoute_1 = __importDefault(require("./Routers/adminRoute"));
 const passport_1 = __importDefault(require("passport"));
 const cookie_session_1 = __importDefault(require("cookie-session"));
 require("./controller/socailController");
@@ -24,6 +25,7 @@ const mainApp = (app) => {
         .use("/api", projectRouter_1.default)
         .use("/api", studentVoteRouter_1.default)
         .use("/api", ratingRouter_1.default)
+        .use("/api", adminRoute_1.default)
         .use((0, cookie_session_1.default)({
         name: "session",
         keys: ["key1", "keys2"],

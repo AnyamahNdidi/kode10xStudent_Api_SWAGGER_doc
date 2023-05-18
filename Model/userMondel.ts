@@ -8,7 +8,7 @@ interface userData {
     stack: string;
     cohort: string;
     phoneNum: string;
-    role:string;
+    role: 'user' | 'admin' | 'super-admin'; 
     profile: any[];
     project: any[];
     email: string;
