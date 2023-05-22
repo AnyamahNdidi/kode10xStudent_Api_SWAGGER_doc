@@ -9,16 +9,55 @@ import {UserAdmin} from "../interface/galleryInterface"
 
 
 
-export const  postImage = asyncHandler((req: Request, res: Response, next:NextFunction) => {
+export const  postImage = asyncHandler(async (req: any, res:any, next:NextFunction) => {
     try
     {
+        const {title, image} = req.body
         const adminuser = req.user as UserAdmin
 
         if (adminuser?.role !== 'admin') {
             return res.status(403).json({ message: 'Unauthorized Only Admin Can Updload ' });
         }
+        const imageupload :{ secure_url: string, public_id:string} = await cloudinary.uploader.upload(req?.file?.path)
+         
+        const galleryData = await galleryModel.create({
+            title,
+            image: imageupload.secure_url,
+            imgaeId: imageupload.public_id
+        })
+
+        return res.status(200).json({
+            message: "image uploaded sucessfully",
+            data:galleryData
+        })
+
+  
         
-        
+    } catch (error)
+    {
+                 next(
+         new mainAppError({
+            name: "Error in uplaoding gallery",
+            message: "can't upload images to gallery",
+            status: HTTP.BAD_REQUEST,
+            isSuccess:false
+        })
+        )
+    }
+})
+
+export const  getAllImage = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
+    try
+    {
+
+        const galleryData = await galleryModel.find()
+
+        return res.status(200).json({
+            message: "All sucessfully",
+            data:galleryData
+        })
+
+  
         
     } catch (error)
     {

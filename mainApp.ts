@@ -8,6 +8,7 @@ import projectRouters from "./Routers/projectRouter"
 import studentvote from "./Routers/studentVoteRouter"
 import rateRouter from "./Routers/ratingRouter"
 import adminRoute from "./Routers/adminRoute"
+import galleryRoute from "./Routers/galleryRoute"
 import passport from "passport";
 import cookie from "cookie-session";
 import "./controller/socailController"
@@ -22,6 +23,7 @@ export const mainApp = (app:Application) => {
         .use("/api", studentvote)
         .use("/api", rateRouter)
         .use("/api", adminRoute)
+        .use("/api", galleryRoute)
         .use(cookie({
             name: "session",
             keys: ["key1", "keys2"],

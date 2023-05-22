@@ -15,7 +15,7 @@ const galleryModel = new mongoose.Schema({
     title: {
         type: String
     },
-    inage: {
+    image: {
         type: String
     },
     imageID: {

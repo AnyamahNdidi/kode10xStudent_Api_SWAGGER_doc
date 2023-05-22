@@ -6,6 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TokenGenerator = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const TokenGenerator = (data) => {
-    return jsonwebtoken_1.default.sign(data, "thisisthesecrect", { expiresIn: "2d" });
+    return jsonwebtoken_1.default.sign(data, "thisisthesecrect", { expiresIn: "1d" });
 };
 exports.TokenGenerator = TokenGenerator;
