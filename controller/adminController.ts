@@ -29,7 +29,7 @@ import {mainAppError,HTTP} from "../middlewares/ErrorDefinder"
  *           type: string
  *           description: state the course you are in for
  *       example:
- *         title: Tochukwu
+ *         firstName: Tochukwu
  *         email: admin@gmail.com
  *         password: javascript
  */
@@ -123,6 +123,50 @@ export const registerAdmin = asyncHandler(async (req: Request, res: Response, ne
         )
     }
 })
+
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     adimLogin:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           description: brief description of what you learn
+ *         password:
+ *           type: string
+ *           description: state the course you are in for
+ *       example:
+ *         email: admin@gmail.com
+ *         password: javascript
+ */
+
+
+/**
+ * @swagger
+ * /api/login/admin:
+ *   post:
+ *      summary: admin login end point
+ *      tags: [admin authentication]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/adimLogin'
+ *      responses:
+ *          '200':
+ *              description: Resource added successfully
+ *          '500':
+ *              description: Internal server error
+ *          '400':
+ *              description: Bad request
+ */
 
 export const loginAdmin = asyncHandler(async (req: any, res:any, next:NextFunction) => {
     try

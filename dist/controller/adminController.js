@@ -51,7 +51,7 @@ const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
  *           type: string
  *           description: state the course you are in for
  *       example:
- *         title: Tochukwu
+ *         firstName: Tochukwu
  *         email: admin@gmail.com
  *         password: javascript
  */
@@ -122,6 +122,46 @@ exports.registerAdmin = (0, AsyncHandler_1.asyncHandler)((req, res, next) => __a
         }));
     }
 }));
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     adimLogin:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           description: brief description of what you learn
+ *         password:
+ *           type: string
+ *           description: state the course you are in for
+ *       example:
+ *         email: admin@gmail.com
+ *         password: javascript
+ */
+/**
+ * @swagger
+ * /api/login/admin:
+ *   post:
+ *      summary: admin login end point
+ *      tags: [admin authentication]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/adimLogin'
+ *      responses:
+ *          '200':
+ *              description: Resource added successfully
+ *          '500':
+ *              description: Internal server error
+ *          '400':
+ *              description: Bad request
+ */
 exports.loginAdmin = (0, AsyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
