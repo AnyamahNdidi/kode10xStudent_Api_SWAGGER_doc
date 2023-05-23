@@ -8,11 +8,12 @@ import { mainAppError, HTTP } from "../middlewares/ErrorDefinder"
 import {UserAdmin} from "../interface/galleryInterface"
 
 
+
 /**
  * @swagger
  * components:
  *   schemas:
- *     uploadgallery:
+ *     uploadimage:
  *       type: object
  *       required:
  *         - title
@@ -20,15 +21,44 @@ import {UserAdmin} from "../interface/galleryInterface"
  *       properties:
  *         title:
  *           type: string
- *           description: The user biography
+ *           description: Topice of what you learn
  *         image:
- *           type: file
- *           description: The user biography
+ *           type: string
+ *           format: binary
+ *           description: the imag file
  *       example:
- *         title: party image
- *         image: file.jpg
+ *         title: partyimage
+ *         image: file.jpeg
+ *       securitySchemes:
+ *         Authorization:
+ *           type: http
+ *           scheme: bearer
+ *           bearerFormat: JWT   
  */
 
+
+/**
+ * @swagger
+ *  /api/post/image:
+ *  post:
+ *    security:
+ *      - Authorization: []
+ *    summary: Admin endpoint to upload image
+ *    tags: [updateImage Admin]
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            $ref: '#/components/schemas/uploadimage'
+ *    responses:
+ *      200:
+ *        description: The profile has been updated
+ *      404:
+ *        description: The profile was not found
+ *      500:
+ *        description: Some error happened
+ */
 
 
 
@@ -40,9 +70,9 @@ export const  postImage = asyncHandler(async (req: any, res:any, next:NextFuncti
         const {title, image} = req.body
         const adminuser = req.user as any
 
-        // console.log(adminuser.info.role)
+        console.log(adminuser.info.role)
 
-        if (adminuser?.info?.role !== 'admin') {
+        if (adminuser?.info.role !== 'admin') {
             return res.status(403).json({ message: 'Unauthorized Only Admin Can Updload ' });
         }
         const imageupload :{ secure_url: string, public_id:string} = await cloudinary.uploader.upload(req?.file?.path)

@@ -53,7 +53,7 @@ const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
  *       example:
  *         firstName: Tochukwu
  *         email: admin@gmail.com
- *         password: javascript
+ *         password: passwors
  */
 /**
  * @swagger

@@ -31,7 +31,7 @@ import {mainAppError,HTTP} from "../middlewares/ErrorDefinder"
  *       example:
  *         firstName: Tochukwu
  *         email: admin@gmail.com
- *         password: javascript
+ *         password: passwors
  */
 
 

@@ -18,12 +18,23 @@ const server = app.listen(port, () => {
 app.set("view engine", "ejs");
 const swaggerDefinition = {
     basePath: '/',
-    openapi: '3.0.0',
+    openapi: '3.0.3',
     info: {
         version: '1.0.0',
         title: 'Stuent portal api ',
         description: 'this is for kode10x student portal registration api build with node js',
     },
+    components: {
+        securitySchemes: {
+            Authorization: {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+                value: "Bearer <JWT token here>"
+            },
+        },
+    },
+    //  security: [{ Authorization: [] }],
     servers: [
         { url: '/' },
     ],

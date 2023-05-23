@@ -21,7 +21,7 @@ const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
  * @swagger
  * components:
  *   schemas:
- *     uploadgallery:
+ *     uploadimage:
  *       type: object
  *       required:
  *         - title
@@ -29,24 +29,52 @@ const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
  *       properties:
  *         title:
  *           type: string
- *           description: The user biography
+ *           description: Topice of what you learn
  *         image:
- *           type: file
- *           description: The user biography
+ *           type: string
+ *           format: binary
+ *           description: the imag file
  *       example:
- *         title: party image
- *         image: file.jpg
+ *         title: partyimage
+ *         image: file.jpeg
+ *       securitySchemes:
+ *         Authorization:
+ *           type: http
+ *           scheme: bearer
+ *           bearerFormat: JWT
+ */
+/**
+ * @swagger
+ *  /api/post/image:
+ *  post:
+ *    security:
+ *      - Authorization: []
+ *    summary: Admin endpoint to upload image
+ *    tags: [updateImage Admin]
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            $ref: '#/components/schemas/uploadimage'
+ *    responses:
+ *      200:
+ *        description: The profile has been updated
+ *      404:
+ *        description: The profile was not found
+ *      500:
+ *        description: Some error happened
  */
 exports.postImage = (0, AsyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     try {
         const { title, image } = req.body;
         const adminuser = req.user;
-        // console.log(adminuser.info.role)
-        if (((_a = adminuser === null || adminuser === void 0 ? void 0 : adminuser.info) === null || _a === void 0 ? void 0 : _a.role) !== 'admin') {
+        console.log(adminuser.info.role);
+        if ((adminuser === null || adminuser === void 0 ? void 0 : adminuser.info.role) !== 'admin') {
             return res.status(403).json({ message: 'Unauthorized Only Admin Can Updload ' });
         }
-        const imageupload = yield cloudinary_1.default.uploader.upload((_b = req === null || req === void 0 ? void 0 : req.file) === null || _b === void 0 ? void 0 : _b.path);
+        const imageupload = yield cloudinary_1.default.uploader.upload((_a = req === null || req === void 0 ? void 0 : req.file) === null || _a === void 0 ? void 0 : _a.path);
         const galleryData = yield GalleryModel_1.default.create({
             title,
             image: imageupload.secure_url,
