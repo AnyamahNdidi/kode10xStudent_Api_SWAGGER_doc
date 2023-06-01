@@ -12,6 +12,9 @@ const ratindModel = new mongoose_1.default.Schema({
     properDate: {
         type: String,
     },
+    phase: {
+        type: String,
+    },
     allweeklyrating: [{
             course: { type: String, required: true },
             rate: { type: Number, required: true },
