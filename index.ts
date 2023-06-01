@@ -8,7 +8,7 @@ const app: Application = express()
 
 
 const server = app.listen(port, () => {
-    console.log(`Server listeningxcv on port ${port}`)
+    console.log(`Server listeningxcv on ports ${port}`)
 })
 mainApp(app)
 db()
