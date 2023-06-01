@@ -351,7 +351,7 @@ exports.getSingleStudent = (0, AsyncHandler_1.asyncHandler)((req, res, next) => 
             options: { createdAt: -1 }
         }).populate({
             path: "weeklyratingcourse",
-            select: 'date allweeklyrating properDate',
+            select: 'date allweeklyrating properDate phase',
             options: { createdAt: -1 }
         });
         return res.status(ErrorDefinder_1.HTTP.OK).json({

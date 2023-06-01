@@ -400,7 +400,7 @@ export const getSingleStudent = asyncHandler(async (req: Request, res: Response,
             options:{createdAt: -1}
         }).populate({
             path: "weeklyratingcourse",
-            select: 'date allweeklyrating properDate',
+            select: 'date allweeklyrating properDate phase',
             options:{createdAt: -1}
         })
 
