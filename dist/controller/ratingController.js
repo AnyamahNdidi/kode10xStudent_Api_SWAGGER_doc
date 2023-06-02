@@ -146,7 +146,7 @@ exports.getAllStudentRating = (0, AsyncHandler_1.asyncHandler)((req, res, next) 
     try {
         const getStat = yield userMondel_1.default.findById(req.params.id).populate({
             path: "weeklyratingcourse",
-            select: 'date allweeklyrating properDate',
+            select: 'date allweeklyrating properDate phase',
             options: { createdAt: -1 }
         });
         const _a = getStat === null || getStat === void 0 ? void 0 : getStat._doc, { profile, studentLearning, project } = _a, info = __rest(_a, ["profile", "studentLearning", "project"]);

@@ -150,7 +150,7 @@ export const getAllStudentRating = asyncHandler( async (req: Request, res: Respo
   try {
     const getStat = await studentModel.findById(req.params.id).populate({
             path: "weeklyratingcourse",
-            select: 'date allweeklyrating properDate',
+            select: 'date allweeklyrating properDate phase',
             options:{createdAt: -1}
     },)
       
