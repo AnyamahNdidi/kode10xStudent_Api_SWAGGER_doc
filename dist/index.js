@@ -11,7 +11,7 @@ const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const port = 9092;
 const app = (0, express_1.default)();
 const server = app.listen(port, () => {
-    console.log(`Server listeningxcv on port ${port}`);
+    console.log(`Server listeningxcv on ports ${port}`);
 });
 (0, mainApp_1.mainApp)(app);
 (0, db_1.default)();

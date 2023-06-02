@@ -95,7 +95,7 @@ export const studentRating = asyncHandler(async (req: Request, res: Response, ne
         const createRatin = await ratingModel.create({
             allweeklyrating: ratingUser,
             properDate: day + " " + month + " " + year,
-            phase:req.body.phase
+            phase:"phase1"
         })
 
         studentInfo?.weeklyratingcourse.push(new mongoose.Types.ObjectId(createRatin?._id))

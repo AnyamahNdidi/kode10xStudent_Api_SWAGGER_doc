@@ -104,7 +104,7 @@ exports.studentRating = (0, AsyncHandler_1.asyncHandler)((req, res, next) => __a
         const createRatin = yield ratingModel_1.default.create({
             allweeklyrating: ratingUser,
             properDate: day + " " + month + " " + year,
-            phase: req.body.phase
+            phase: "phase1"
         });
         studentInfo === null || studentInfo === void 0 ? void 0 : studentInfo.weeklyratingcourse.push(new mongoose_1.default.Types.ObjectId(createRatin === null || createRatin === void 0 ? void 0 : createRatin._id));
         studentInfo.save();

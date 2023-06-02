@@ -60,7 +60,9 @@ process.on("uncaughtException", (error:Error) => {
 })
 
 process.on("unhandledRejection", (reason:any) => {
-       console.log("stopn here: unhandledRejection")
+    
+    
+    console.log("stopn here: unhandledRejection")
     console.log(reason)
 
     server.close(() => {
