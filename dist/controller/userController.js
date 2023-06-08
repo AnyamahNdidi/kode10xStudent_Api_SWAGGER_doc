@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSingleStudent = exports.getAllStudent = exports.LoginStudent = exports.registerStudent = void 0;
+exports.changePassword = exports.resetUserPassword = exports.getSingleStudent = exports.getAllStudent = exports.LoginStudent = exports.registerStudent = void 0;
 const userMondel_1 = __importDefault(require("../Model/userMondel"));
 const AsyncHandler_1 = require("../AsyncHandler");
 const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
@@ -31,6 +31,7 @@ const emailvat_1 = require("../utils/emailvat");
 const GenerateToken_1 = require("../utils/GenerateToken");
 const profileModel_1 = __importDefault(require("../Model/profileModel"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 // function generateStudentId() {
 // 	const characters =
 // 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -363,6 +364,143 @@ exports.getSingleStudent = (0, AsyncHandler_1.asyncHandler)((req, res, next) => 
         next(new ErrorDefinder_1.mainAppError({
             name: "Error in Fetchibg all one single user",
             message: "can get all user",
+            status: ErrorDefinder_1.HTTP.BAD_REQUEST,
+            isSuccess: false
+        }));
+    }
+}));
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     usersEmailResetPassword:
+ *       type: object
+ *       required:
+ *         - email
+ *       properties:
+ *         email:
+ *           type: string
+ *           description: provide register email to reset password
+ *       example:
+ *         email: johndeo@gmail.com
+ */
+/**
+ * @swagger
+ * /api/reset/password:
+ *   post:
+ *      summary: endpoint for student to recieve link to change password
+ *      tags: [users]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/usersEmailResetPassword'
+ *      responses:
+ *          '200':
+ *              description: Resource added successfully
+ *          '500':
+ *              description: Internal server error
+ *          '400':
+ *              description: Bad request
+ */
+exports.resetUserPassword = (0, AsyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { email } = req.body;
+        const user = yield userMondel_1.default.findOne({ email });
+        console.log(user === null || user === void 0 ? void 0 : user.firstName);
+        if (user) {
+            const newToken = (0, GenerateToken_1.TokenGenerator)({ user });
+            console.log(newToken);
+            (0, emailvat_1.resetStudentPassword)(user, newToken).then((result) => {
+                console.log("message been sent to you: ");
+            })
+                .catch((error) => console.log(error));
+            return res.status(200).json({
+                message: "Please check your email to set up a new password",
+            });
+        }
+        else {
+            return res.status(404).json({ message: "email can't be found" });
+        }
+    }
+    catch (error) {
+        next(new ErrorDefinder_1.mainAppError({
+            name: "Error in Sending Reset passWord Mail",
+            message: error.message,
+            status: ErrorDefinder_1.HTTP.BAD_REQUEST,
+            isSuccess: false
+        }));
+    }
+}));
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     editUsersPassword:
+ *       type: object
+ *       required:
+ *         - password
+ *       properties:
+ *         image:
+ *           type: string
+ *           description: input the new user password
+ *       example:
+ *         password: password
+ */
+/**
+ * @swagger
+ *  /api/user/{id}/password-change:
+ *  patch:
+ *    summary: Update user password
+ *    tags: [users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/editUsersPassword'
+ *    responses:
+ *      200:
+ *        description: password has been updated
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/editUsersPassword'
+ *      404:
+ *        description: The profile was not found
+ *      500:
+ *        description: Some error happened
+ */
+exports.changePassword = (0, AsyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { password } = req.body;
+        const studentId = yield userMondel_1.default.findById(req.params.id);
+        if (studentId) {
+            const salt = yield bcrypt_1.default.genSalt(10);
+            const hashed = yield bcrypt_1.default.hash(password, salt);
+            yield userMondel_1.default.findByIdAndUpdate(studentId === null || studentId === void 0 ? void 0 : studentId._id, {
+                password: hashed,
+            }, { new: true });
+            return res.status(200).json({
+                message: "password has been changed sucessfully",
+            });
+        }
+        else {
+            return res.status(404).json({ message: "Unable to change passwor user can be found" });
+        }
+    }
+    catch (error) {
+        next(new ErrorDefinder_1.mainAppError({
+            name: "Error in changing password",
+            message: error.message,
             status: ErrorDefinder_1.HTTP.BAD_REQUEST,
             isSuccess: false
         }));

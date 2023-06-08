@@ -2,10 +2,11 @@ import express, { Request, Response,NextFunction } from "express";
 import studentModel from "../Model/userMondel"
 import { asyncHandler } from "../AsyncHandler"
 import {mainAppError,HTTP} from "../middlewares/ErrorDefinder"
-import { AdminServiceEmail } from "../utils/emailvat"
+import { AdminServiceEmail,resetStudentPassword } from "../utils/emailvat"
 import { TokenGenerator } from "../utils/GenerateToken"
 import profileModel from "../Model/profileModel"
 import mongoose from "mongoose"
+import bcrypt from "bcrypt";
 
 // function generateStudentId() {
 // 	const characters =
@@ -423,4 +424,180 @@ export const getSingleStudent = asyncHandler(async (req: Request, res: Response,
 
     }
 
- })
+})
+
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     usersEmailResetPassword:
+ *       type: object
+ *       required:
+ *         - email
+ *       properties:
+ *         email:
+ *           type: string
+ *           description: provide register email to reset password
+ *       example:
+ *         email: johndeo@gmail.com
+ */
+
+
+/**
+ * @swagger
+ * /api/reset/password:
+ *   post:
+ *      summary: endpoint for student to recieve link to change password
+ *      tags: [users]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/usersEmailResetPassword'
+ *      responses:
+ *          '200':
+ *              description: Resource added successfully
+ *          '500':
+ *              description: Internal server error
+ *          '400':
+ *              description: Bad request
+ */
+ 
+export const resetUserPassword = asyncHandler(async (req: Request, res: Response, next:NextFunction) => {
+    try
+    {
+        const { email } = req.body
+        const user = await studentModel.findOne({ email });
+        console.log(user?.firstName)
+
+        if (user)
+        {
+            const newToken = TokenGenerator({user})
+            console.log(newToken)
+
+            resetStudentPassword(user, newToken).then((result) => {
+						console.log("message been sent to you: ");
+					})
+                .catch((error) => console.log(error));
+            
+            return res.status(200).json({
+					message: "Please check your email to set up a new password",
+				});
+
+            
+        } else
+        {
+            return res.status(404).json({ message: "email can't be found" });
+            
+        }
+         
+    } catch (error)
+    {
+        
+        next(
+         new mainAppError({
+            name: "Error in Sending Reset passWord Mail",
+            message: (error as Error).message,
+            status: HTTP.BAD_REQUEST,
+            isSuccess:false
+        })
+        )
+    }
+})
+ 
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     editUsersPassword:
+ *       type: object
+ *       required:
+ *         - password
+ *       properties:
+ *         image:
+ *           type: string
+ *           description: input the new user password
+ *       example:
+ *         password: password
+ */
+
+
+
+/**
+ * @swagger
+ *  /api/user/{id}/password-change:
+ *  patch:
+ *    summary: Update user password
+ *    tags: [users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/editUsersPassword'
+ *    responses:
+ *      200:
+ *        description: password has been updated
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/editUsersPassword'
+ *      404:
+ *        description: The profile was not found
+ *      500:
+ *        description: Some error happened
+ */
+
+
+
+export const changePassword = asyncHandler (async(req: Request, res: Response, next:NextFunction) => {
+    try
+    {
+        const { password } = req.body;
+
+        const studentId = await studentModel.findById(req.params.id);
+        if (studentId)
+        {
+            const salt = await bcrypt.genSalt(10);
+            const hashed = await bcrypt.hash(password, salt);
+            
+            await studentModel.findByIdAndUpdate(
+                studentId?._id,
+                {
+                    password:hashed,
+                },
+                { new: true },
+            )
+            
+            return res.status(200).json({
+			message: "password has been changed sucessfully",
+		});
+        } else
+        {
+            return res.status(404).json({ message: "Unable to change passwor user can be found" });
+        }
+        
+
+        
+    } catch (error)
+    {
+         next(
+         new mainAppError({
+            name: "Error in changing password",
+            message: (error as Error).message,
+            status: HTTP.BAD_REQUEST,
+            isSuccess:false
+        })
+        )
+    }
+})
