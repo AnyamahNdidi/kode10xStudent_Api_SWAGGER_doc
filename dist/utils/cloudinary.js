@@ -9,7 +9,7 @@ const cloudinary = cloudinary_1.default.v2;
 // dotenv.config();
 cloudinary.config({
     cloud_name: "ndtech",
-    api_key: "325692748593977",
-    api_secret: "umNXDmlZgBcvD-DrYhwoehT0HDM",
+    api_key: "414962129865933",
+    api_secret: "HwOGA6ka8RsN0gI4Adr_xnFD05M",
 });
 exports.default = cloudinary;

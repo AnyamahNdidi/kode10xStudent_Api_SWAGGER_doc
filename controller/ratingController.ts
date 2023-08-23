@@ -63,7 +63,7 @@ export const studentRating = asyncHandler(async (req: Request, res: Response, ne
     {
         const studentInfo:any = await studentModel.findById(req.params.id)
          
-        console.log("gvdjhbk",studentInfo)
+        // console.log("gvdjhbk",studentInfo)
         if (!studentInfo) {
         next(
           new mainAppError({
@@ -95,7 +95,7 @@ export const studentRating = asyncHandler(async (req: Request, res: Response, ne
         const createRatin = await ratingModel.create({
             allweeklyrating: ratingUser,
             properDate: day + " " + month + " " + year,
-            phase:"phase1"
+            phase:"phase2"
         })
 
         studentInfo?.weeklyratingcourse.push(new mongoose.Types.ObjectId(createRatin?._id))
