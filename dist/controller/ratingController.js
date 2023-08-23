@@ -80,7 +80,7 @@ const ErrorDefinder_1 = require("../middlewares/ErrorDefinder");
 exports.studentRating = (0, AsyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const studentInfo = yield userMondel_1.default.findById(req.params.id);
-        console.log("gvdjhbk", studentInfo);
+        // console.log("gvdjhbk",studentInfo)
         if (!studentInfo) {
             next(new ErrorDefinder_1.mainAppError({
                 name: "",
@@ -104,7 +104,7 @@ exports.studentRating = (0, AsyncHandler_1.asyncHandler)((req, res, next) => __a
         const createRatin = yield ratingModel_1.default.create({
             allweeklyrating: ratingUser,
             properDate: day + " " + month + " " + year,
-            phase: "phase1"
+            phase: "phase2"
         });
         studentInfo === null || studentInfo === void 0 ? void 0 : studentInfo.weeklyratingcourse.push(new mongoose_1.default.Types.ObjectId(createRatin === null || createRatin === void 0 ? void 0 : createRatin._id));
         studentInfo.save();
